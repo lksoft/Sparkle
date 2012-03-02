@@ -22,6 +22,8 @@
 	NSString *tempDir;
 	
 	NSString *relaunchPath;
+	
+	BOOL	postponedOnce;
 }
 
 - (void)checkForUpdatesAtURL:(NSURL *)URL host:(SUHost *)host;

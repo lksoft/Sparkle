@@ -142,6 +142,7 @@
 
 - (void)downloadUpdate
 {
+	postponedOnce = NO;
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[updateItem fileURL]];
 	[request setValue:[updater userAgentString] forHTTPHeaderField:@"User-Agent"];
 	download = [[NSURLDownload alloc] initWithRequest:request delegate:self];
@@ -274,7 +275,7 @@
     }
     
     // Give the host app an opportunity to postpone the install and relaunch.
-    static BOOL postponedOnce = NO;
+//    static BOOL postponedOnce = NO;
     if (!postponedOnce && [[updater delegate] respondsToSelector:@selector(updater:shouldPostponeRelaunchForUpdate:untilInvoking:)])
     {
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[[self class] instanceMethodSignatureForSelector:@selector(installWithToolAndRelaunch:)]];
