@@ -162,6 +162,7 @@
 
 - (void) installerForHost:(SUHost *)host failedWithError:(NSError *)error
 {
+	SULog(@"There was an installer error:%@", error);
     // Perhaps a poor assumption but: if we're not relaunching, we assume we shouldn't be showing any UI either. Because non-relaunching installations are kicked off without any user interaction, we shouldn't be interrupting them.
     if (shouldRelaunch)
         NSRunAlertPanel( @"", @"%@", @"OK", @"", @"", [error localizedDescription] );
