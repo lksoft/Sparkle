@@ -1305,6 +1305,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FA1941CA0D94A70100DD942E /* ConfigFrameworkDebug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application: Little Known Software, Inc.";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -1312,6 +1314,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FA1941D50D94A70100DD942E /* ConfigFrameworkRelease.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application: Little Known Software, Inc.";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
@@ -1332,6 +1336,7 @@
 			baseConfigurationReference = FA1941D30D94A70100DD942E /* ConfigRelaunchDebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Little Known Software, Inc.";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -1347,6 +1352,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = finish_installation;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -1355,6 +1361,7 @@
 			baseConfigurationReference = FA1941D40D94A70100DD942E /* ConfigRelaunchRelease.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Little Known Software, Inc.";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
@@ -1369,6 +1376,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = finish_installation;
+				PROVISIONING_PROFILE = "";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1378,6 +1386,7 @@
 			baseConfigurationReference = FA1941D40D94A70100DD942E /* ConfigRelaunchRelease.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Little Known Software, Inc.";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = finish_installation.pch;
@@ -1390,6 +1399,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = finish_installation;
+				PROVISIONING_PROFILE = "";
 			};
 			name = "Release (GC dual-mode; 10.5+)";
 		};
@@ -1424,6 +1434,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 61072EB20DF2640C008FE88B /* ConfigFrameworkReleaseGCSupport.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application: Little Known Software, Inc.";
+				PROVISIONING_PROFILE = "";
 			};
 			name = "Release (GC dual-mode; 10.5+)";
 		};
