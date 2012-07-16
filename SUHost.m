@@ -12,8 +12,14 @@
 #import <sys/mount.h> // For statfs for isRunningOnReadOnlyVolume
 #import "SULog.h"
 
+@interface SUHost ()
+- (void)setObject:(id)value forMailUserDefaultsKey:(NSString *)defaultName isBool:(BOOL)isABool;
+- (BOOL)boolForMailUserDefaultsKey:(NSString *)defaultName;
+- (id)objectForMailUserDefaultsKey:(NSString *)defaultName;
+@end
 
 @implementation SUHost
+
 
 - (id)initWithBundle:(NSBundle *)aBundle
 {
@@ -182,6 +188,9 @@
 
 - (id)objectForUserDefaultsKey:(NSString *)defaultName
 {
+	
+	return [self objectForMailUserDefaultsKey:defaultName];
+	
 	// Under Tiger, CFPreferencesCopyAppValue doesn't get values from NSRegistrationDomain, so anything
 	// passed into -[NSUserDefaults registerDefaults:] is ignored.  The following line falls
 	// back to using NSUserDefaults, but only if the host bundle is the main bundle.
@@ -194,6 +203,10 @@
 
 - (void)setObject:(id)value forUserDefaultsKey:(NSString *)defaultName;
 {
+	
+	[self setObject:value forMailUserDefaultsKey:defaultName isBool:NO];
+	return;
+	
 	if (usesStandardUserDefaults)
 	{
 		[[NSUserDefaults standardUserDefaults] setObject:value forKey:defaultName];
@@ -207,6 +220,10 @@
 
 - (BOOL)boolForUserDefaultsKey:(NSString *)defaultName
 {
+	
+	return [self boolForMailUserDefaultsKey:defaultName];
+	
+	
 	if (usesStandardUserDefaults)
 		return [[NSUserDefaults standardUserDefaults] boolForKey:defaultName];
 	
@@ -224,6 +241,10 @@
 
 - (void)setBool:(BOOL)value forUserDefaultsKey:(NSString *)defaultName
 {
+	[self setObject:[NSNumber numberWithBool:value] forMailUserDefaultsKey:defaultName isBool:YES];
+	return;
+	
+	
 	if (usesStandardUserDefaults)
 	{
 		[[NSUserDefaults standardUserDefaults] setBool:value forKey:defaultName];
@@ -242,6 +263,163 @@
 - (BOOL)boolForKey:(NSString *)key {
     return [self objectForUserDefaultsKey:key] ? [self boolForUserDefaultsKey:key] : [self boolForInfoDictionaryKey:key];
 }
+
+
+
+//	Mail plugin sandbox default handlers
+
+typedef enum {
+	LKSUStringType,
+	LKSUDateType,
+	LKSUFloatType,
+	LKSUIntType
+} LKSUReadType;
+
+
+- (void)setObject:(id)value forMailUserDefaultsKey:(NSString *)defaultName isBool:(BOOL)isABool {
+	
+	NSString	*sandboxPath = [@"~/Library/Containers/com.apple.mail/Data/Library/Preferences" stringByExpandingTildeInPath];
+	NSString	*domainToUse = defaultsDomain;
+	BOOL		isDir;
+	NSString	*type = @"string";
+	NSString	*outValue = isABool ? ([value boolValue]?@"YES":@"NO") : [NSString stringWithFormat:@"%@", value];
+
+	//	Get the type for numbers
+	if ([value isKindOfClass:[NSNumber class]]) {
+		switch (*[value objCType]) {
+			case 'd':
+			case 'f':
+				//	A double or float
+				type = @"float";
+				break;
+				
+			default:
+				//	An int of some sort
+				type = @"int";
+				break;
+		}
+	}
+	
+	if (isABool) {
+		type = @"bool";
+	}
+	
+	if ([value isKindOfClass:[NSDate class]]) {
+		type = @"date";
+		NSDateFormatter	*myFormatter = [[NSDateFormatter alloc] initWithDateFormat:@"yyyy-MM-ddTHH:mm:SSZ" allowNaturalLanguage:NO];
+		[myFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease]];
+		[myFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+		outValue = [myFormatter stringFromDate:value];
+	}
+	
+	if ((sandboxPath != nil) && [[NSFileManager defaultManager] fileExistsAtPath:sandboxPath isDirectory:&isDir] && isDir) {
+		domainToUse = [sandboxPath stringByAppendingPathComponent:domainToUse];
+	}
+	NSTask	*defaultWriteTask = [[NSTask alloc] init];
+	type = [@"-" stringByAppendingString:type];
+	[defaultWriteTask setLaunchPath:@"/usr/bin/defaults"];
+	[defaultWriteTask setArguments:@[@"write", domainToUse, defaultName, type, outValue]];
+	
+	[defaultWriteTask launch];
+	[defaultWriteTask release];
+	
+}
+
+- (BOOL)boolForMailUserDefaultsKey:(NSString *)defaultName {
+	id	value = [self objectForMailUserDefaultsKey:defaultName];
+	return [value boolValue];
+}
+
+- (id)objectForMailUserDefaultsKey:(NSString *)defaultName {
+	
+	NSString	*sandboxPath = [@"~/Library/Containers/com.apple.mail/Data/Library/Preferences" stringByExpandingTildeInPath];
+	NSString	*domainToUse = defaultsDomain;
+	BOOL		isDir;
+	
+	if ((sandboxPath != nil) && [[NSFileManager defaultManager] fileExistsAtPath:sandboxPath isDirectory:&isDir] && isDir) {
+		domainToUse = [sandboxPath stringByAppendingPathComponent:domainToUse];
+	}
+
+	NSTask *defaultReadTypeTask = [[NSTask alloc] init];
+	[defaultReadTypeTask setLaunchPath:@"/usr/bin/defaults"];
+	[defaultReadTypeTask setArguments:@[@"read-type", domainToUse, defaultName]];
+	
+	NSPipe *typePipe = [NSPipe pipe];
+	[defaultReadTypeTask setStandardOutput:typePipe];
+	NSFileHandle *typeFile = [typePipe fileHandleForReading];
+	
+	[defaultReadTypeTask launch];
+	[defaultReadTypeTask waitUntilExit];
+	
+	
+	LKSUReadType	type = LKSUStringType;
+	
+	NSString *tempString = [[NSString alloc] initWithData:[typeFile readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+	NSString *typeString = [tempString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	[defaultReadTypeTask release];
+	[tempString release];
+	NSLog(@"type is:%@", typeString);
+	
+	if ([typeString isEqualToString:@"int"] || [typeString isEqualToString:@"integer"]) {
+		type = LKSUIntType;
+	}
+	else if ([typeString isEqualToString:@"date"]) {
+		type = LKSUDateType;
+	}
+	else if ([typeString isEqualToString:@"float"]) {
+		type = LKSUFloatType;
+	}
+	
+	
+	NSTask *defaultReadTask = [[NSTask alloc] init];
+	[defaultReadTask setLaunchPath:@"/usr/bin/defaults"];
+	[defaultReadTask setArguments:@[@"read", domainToUse, defaultName]];
+	
+	NSPipe *pipe = [NSPipe pipe];
+	[defaultReadTask setStandardOutput:pipe];
+	NSFileHandle *file = [pipe fileHandleForReading];
+	
+	[defaultReadTask launch];
+	[defaultReadTask waitUntilExit];
+	
+	tempString = [[NSString alloc] initWithData:[file readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+	NSString *cleanedString = [tempString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	[defaultReadTask release];
+	[tempString release];
+
+	
+	//	Determine the type of the value and convert if necessary
+	id	result = nil;
+	switch (type) {
+		case LKSUDateType:
+		{
+			NSDateFormatter	*myFormatter = [[NSDateFormatter alloc] initWithDateFormat:@"yyyy-MM-ddTHH:mm:SSZ" allowNaturalLanguage:NO];
+			[myFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease]];
+			[myFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+			result = [myFormatter dateFromString:cleanedString];
+		}
+			break;
+			
+		case LKSUIntType:
+			result = [NSNumber numberWithInt:[cleanedString intValue]];
+			break;
+			
+		case LKSUFloatType:
+			result = [NSNumber numberWithFloat:[cleanedString floatValue]];
+			break;
+			
+		default:
+			result = cleanedString;
+			break;
+	}
+	
+	return result;
+	
+}
+
+
+
+
 
 + (NSString *)systemVersionString
 {
