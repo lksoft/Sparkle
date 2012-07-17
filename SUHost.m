@@ -320,6 +320,8 @@ typedef enum {
 	[defaultWriteTask setLaunchPath:@"/usr/bin/defaults"];
 	[defaultWriteTask setArguments:@[@"write", domainToUse, defaultName, type, outValue]];
 	
+	NSLog(@"defaults wrote to %@: %@ %@ %@", domainToUse, defaultName, type, outValue);
+	
 	[defaultWriteTask launch];
 	[defaultWriteTask release];
 	
@@ -370,7 +372,6 @@ typedef enum {
 		type = LKSUFloatType;
 	}
 	
-	
 	NSTask *defaultReadTask = [[NSTask alloc] init];
 	[defaultReadTask setLaunchPath:@"/usr/bin/defaults"];
 	[defaultReadTask setArguments:@[@"read", domainToUse, defaultName]];
@@ -412,6 +413,8 @@ typedef enum {
 			result = cleanedString;
 			break;
 	}
+	
+	NSLog(@"defaults read %@ from: %@ %@", result, domainToUse, defaultName);
 	
 	return result;
 	
