@@ -250,15 +250,15 @@
     //  et al. are not defined in 10.3, but this is probably good enough.
     NSString* verStr = nil;
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4
-    SInt32 major, minor, bugfix;
-    OSErr err1 = Gestalt(gestaltSystemVersionMajor, &major);
-    OSErr err2 = Gestalt(gestaltSystemVersionMinor, &minor);
-    OSErr err3 = Gestalt(gestaltSystemVersionBugFix, &bugfix);
-    if (!err1 && !err2 && !err3)
-    {
-        verStr = [NSString stringWithFormat:@"%@.%@.%@", [NSNumber numberWithInt:major], [NSNumber numberWithInt:minor], [NSNumber numberWithInt:bugfix]];
-    }
-    else
+	SInt32 major, minor, bugfix;
+	OSErr err1 = Gestalt(gestaltSystemVersionMajor, &major);
+	OSErr err2 = Gestalt(gestaltSystemVersionMinor, &minor);
+	OSErr err3 = Gestalt(gestaltSystemVersionBugFix, &bugfix);
+	if (!err1 && !err2 && !err3)
+	{
+		verStr = [NSString stringWithFormat:@"%ld.%ld.%ld", (long)major, (long)minor, (long)bugfix];
+	}
+	else
 #endif
     {
         NSString *versionPlistPath = @"/System/Library/CoreServices/SystemVersion.plist";
