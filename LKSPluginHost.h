@@ -9,7 +9,13 @@
 #import "SUHost.h"
 
 @interface LKSPluginHost : SUHost {
-	NSString	*_sandboxedPrefsPath;
+	NSString		*_sandboxedPrefsPath;
+	NSFileManager	*_manager;
+	NSDictionary	*_suFilteredDefaults;
+	NSDate			*_lastDefaultsLoadTime;
+	BOOL			_skipPreferenceSaves;
 }
+
+@property	(assign)	BOOL	skipPreferenceSaves;
 
 @end

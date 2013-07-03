@@ -136,6 +136,8 @@
 		93FB277A156BD80D001937C7 /* SUPasswordPrompt.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FB2778156BD80D001937C7 /* SUPasswordPrompt.h */; };
 		93FB277B156BD80D001937C7 /* SUPasswordPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = 93FB2779156BD80D001937C7 /* SUPasswordPrompt.m */; };
 		93FB277F156BD826001937C7 /* SUPasswordPrompt.xib in Resources */ = {isa = PBXBuildFile; fileRef = 93FB277D156BD826001937C7 /* SUPasswordPrompt.xib */; };
+		D2041102178453140041696C /* LKSPluginUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = D2041100178453140041696C /* LKSPluginUpdater.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2041103178453140041696C /* LKSPluginUpdater.m in Sources */ = {isa = PBXBuildFile; fileRef = D2041101178453140041696C /* LKSPluginUpdater.m */; };
 		D240ADE8178306BF00EBD6E6 /* LKSPluginHost.h in Headers */ = {isa = PBXBuildFile; fileRef = D240ADE6178306BF00EBD6E6 /* LKSPluginHost.h */; };
 		D240ADE9178306BF00EBD6E6 /* LKSPluginHost.m in Sources */ = {isa = PBXBuildFile; fileRef = D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */; };
 		D240ADEA178306BF00EBD6E6 /* LKSPluginHost.m in Sources */ = {isa = PBXBuildFile; fileRef = D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */; };
@@ -405,6 +407,8 @@
 		93FB2778156BD80D001937C7 /* SUPasswordPrompt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUPasswordPrompt.h; sourceTree = "<group>"; };
 		93FB2779156BD80D001937C7 /* SUPasswordPrompt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUPasswordPrompt.m; sourceTree = "<group>"; };
 		93FB277E156BD826001937C7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SUPasswordPrompt.xib; sourceTree = "<group>"; };
+		D2041100178453140041696C /* LKSPluginUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LKSPluginUpdater.h; sourceTree = "<group>"; };
+		D2041101178453140041696C /* LKSPluginUpdater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LKSPluginUpdater.m; sourceTree = "<group>"; };
 		D240ADE6178306BF00EBD6E6 /* LKSPluginHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LKSPluginHost.h; sourceTree = "<group>"; };
 		D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LKSPluginHost.m; sourceTree = "<group>"; };
 		FA1941CA0D94A70100DD942E /* ConfigFrameworkDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ConfigFrameworkDebug.xcconfig; sourceTree = "<group>"; };
@@ -725,6 +729,8 @@
 				61B5F8E309C4CE3C00B25A18 /* SUUpdater.h */,
 				6158A1C4137904B300487EC1 /* SUUpdater_Private.h */,
 				61B5F8E409C4CE3C00B25A18 /* SUUpdater.m */,
+				D2041100178453140041696C /* LKSPluginUpdater.h */,
+				D2041101178453140041696C /* LKSPluginUpdater.m */,
 				61CFB2C20E38496B007A1735 /* Drivers */,
 				61CFB2C10E384958007A1735 /* Support */,
 			);
@@ -768,6 +774,7 @@
 			files = (
 				61B5F8ED09C4CE3C00B25A18 /* SUUpdater.h in Headers */,
 				3772FEA913DE0B6B00F79537 /* SUVersionDisplayProtocol.h in Headers */,
+				D2041102178453140041696C /* LKSPluginUpdater.h in Headers */,
 				61B5FC0D09C4FC8200B25A18 /* SUAppcast.h in Headers */,
 				61B5FC7009C51F4A00B25A18 /* SUAppcastItem.h in Headers */,
 				61B5FCDF09C52A9F00B25A18 /* SUUpdateAlert.h in Headers */,
@@ -916,7 +923,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Sparkle" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1178,6 +1185,7 @@
 				6102FE4B0E07803800F85D09 /* SUDiskImageUnarchiver.m in Sources */,
 				6102FE5C0E08C7EC00F85D09 /* SUUnarchiver_Private.m in Sources */,
 				61D85D6D0E10B2ED00F9B4A9 /* SUPipedUnarchiver.m in Sources */,
+				D2041103178453140041696C /* LKSPluginUpdater.m in Sources */,
 				61EF67560E25B58D00F754E0 /* SUHost.m in Sources */,
 				5D06E8EB0FD68CE4005AE3F6 /* bspatch.c in Sources */,
 				5D06E8EC0FD68CE4005AE3F6 /* SUBinaryDeltaApply.m in Sources */,
@@ -1405,6 +1413,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
 		};

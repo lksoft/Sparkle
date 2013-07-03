@@ -13,18 +13,26 @@
 #define KEY_LIST_FOR_STRING		@"SUFeedURL SUPublicDSAKeyFile SUFixedHTMLDisplaySize SUPublicDSAKey SUSkippedVersion"
 #define KEY_LIST_FOR_DATE		@"SULastCheckTime SULastProfileSubmissionDate"
 
+#define DEFAULT_RELOAD_TIMEOUT	60
 
 static	NSDateFormatter	*dateFormatter_LKS = nil;
 
 @interface LKSPluginHost ()
 
-@property	(strong)	NSString	*sandboxedPrefsPath;
+@property	(strong)	NSString		*sandboxedPrefsPath;
+@property	(strong)	NSFileManager	*manager;
+@property	(strong)	NSDictionary	*suFilteredDefaults;
+@property	(strong)	NSDate			*lastDefaultsLoadTime;
 
 @end
 
 @implementation LKSPluginHost
 
 @synthesize sandboxedPrefsPath = _sandboxedPrefsPath;
+@synthesize manager = _manager;
+@synthesize suFilteredDefaults =_suFilteredDefaults;
+@synthesize lastDefaultsLoadTime = _lastDefaultsLoadTime;
+@synthesize skipPreferenceSaves = _skipPreferenceSaves;
 
 - (id)initWithBundle:(NSBundle *)aBundle {
 	self = [super initWithBundle:aBundle];
@@ -35,6 +43,11 @@ static	NSDateFormatter	*dateFormatter_LKS = nil;
 			NSString	*libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
 			NSString	*plistName = [[aBundle bundleIdentifier] stringByAppendingPathExtension:@"plist"];
 			self.sandboxedPrefsPath = [[libraryPath stringByAppendingPathComponent:@"Containers/com.apple.mail/Data/Library/Preferences"] stringByAppendingPathComponent:plistName];
+			
+			self.manager = [[[NSFileManager alloc] init] autorelease];
+			self.suFilteredDefaults = [NSDictionary dictionary];
+			self.lastDefaultsLoadTime = [NSDate dateWithTimeIntervalSince1970:1];
+			
 		}
 	}
 	return self;
@@ -42,48 +55,43 @@ static	NSDateFormatter	*dateFormatter_LKS = nil;
 
 -(void)dealloc {
 	self.sandboxedPrefsPath = nil;
+	self.manager = nil;
+	self.suFilteredDefaults = nil;
+	self.lastDefaultsLoadTime = nil;
 	[super dealloc];
+}
+
+- (NSDictionary *)sparkleDefaultValues {
+	if ([self.manager fileExistsAtPath:self.sandboxedPrefsPath]) {
+		if ([[NSDate date] timeIntervalSince1970] > ([self.lastDefaultsLoadTime timeIntervalSince1970] + DEFAULT_RELOAD_TIMEOUT)) {
+			NSMutableDictionary	__block	*newDict = [NSMutableDictionary dictionary];
+			NSDictionary	*fullContents = [NSDictionary dictionaryWithContentsOfFile:self.sandboxedPrefsPath];
+			[fullContents keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
+				
+				if ([key hasPrefix:@"SU"]) {
+					[newDict setObject:obj forKey:key];
+					return YES;
+				}
+				else {
+					return NO;
+				}
+			}];
+			
+			self.suFilteredDefaults = [NSDictionary dictionaryWithDictionary:newDict];
+		}
+	}
+	return self.suFilteredDefaults;
 }
 
 - (id)readDefaultValueForKey:(NSString *)defaultKey {
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:self.sandboxedPrefsPath]) {
+		
+		NSDictionary	*suValues = [self sparkleDefaultValues];
+		if (suValues) {
+			return [suValues objectForKey:defaultKey];
+		}
 
-		NSTask *readDefaultTask = [[NSTask alloc] init];
-		[readDefaultTask setLaunchPath:@"/usr/bin/defaults"];
-		[readDefaultTask setArguments:@[@"read", self.sandboxedPrefsPath, defaultKey]];
-		
-		NSPipe *pipe = [NSPipe pipe];
-		[readDefaultTask setStandardOutput:pipe];
-		NSFileHandle *file = [pipe fileHandleForReading];
-		
-		[readDefaultTask launch];
-		[readDefaultTask waitUntilExit];
-
-		NSString *tempString = [[NSString alloc] initWithData:[file readDataToEndOfFile] encoding:NSUTF8StringEncoding];
-		NSString *cleanedString = [tempString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-
-		[readDefaultTask release];
-		[tempString release];
-		
-		//	If it is a string value just return it
-		if ([KEY_LIST_FOR_STRING rangeOfString:defaultKey].location != NSNotFound) {
-			return cleanedString;
-		}
-		
-		//	If the key is for a number, convert to a number
-		if ([KEY_LIST_FOR_NUMBER rangeOfString:defaultKey].location != NSNotFound) {
-			return [NSNumber numberWithInteger:[cleanedString integerValue]];
-		}
-		
-		//	Otherwise make it a date, if that is the right choice
-		if ([KEY_LIST_FOR_DATE rangeOfString:defaultKey].location != NSNotFound) {
-			return [[[self class] formatter] dateFromString:cleanedString];
-		}
-		else {
-			NSLog(@"Could not find the proper type for default:%@", defaultKey);
-		}
-		
 	}
 	else {
 		return [super objectForUserDefaultsKey:defaultKey];
@@ -137,6 +145,7 @@ static	NSDateFormatter	*dateFormatter_LKS = nil;
 		
 		if ([writeDefaultTask terminationStatus] == 0) {
 			//	Send a distributed notice to give the plugin a chance to reload defaults if necessary
+			self.lastDefaultsLoadTime = [NSDate dateWithTimeIntervalSince1970:1];
 			[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"LKSSUPluginDefaultsChanged" object:nil userInfo:@{@"pluginIdentifier": [self.bundle bundleIdentifier]} deliverImmediately:YES];
 		}
 		
@@ -162,6 +171,10 @@ static	NSDateFormatter	*dateFormatter_LKS = nil;
 
 - (void)setObject:(id)value forUserDefaultsKey:(NSString *)defaultName {
 	
+	if (self.skipPreferenceSaves) {
+		return;
+	}
+	
 	if (self.sandboxedPrefsPath == nil) {
 		[super setObject:value forUserDefaultsKey:defaultName];
 	}
@@ -180,6 +193,10 @@ static	NSDateFormatter	*dateFormatter_LKS = nil;
 }
 
 - (void)setBool:(BOOL)value forUserDefaultsKey:(NSString *)defaultName {
+	
+	if (self.skipPreferenceSaves) {
+		return;
+	}
 	
 	if (self.sandboxedPrefsPath == nil) {
 		[super setBool:value forUserDefaultsKey:defaultName];
