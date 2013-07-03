@@ -23,7 +23,11 @@
 	NSString *customUserAgentString;
 	SUHost *host;
 	IBOutlet id delegate;
+	
+	BOOL	_updatingIsSecure;
 }
+
+@property	(assign)	BOOL	updatingIsSecure;
 
 + (SUUpdater *)sharedUpdater;
 + (SUUpdater *)updaterForBundle:(NSBundle *)bundle;

@@ -6,6 +6,7 @@
 #import "SUStatusController.h"
 #import "SUPlainInstallerInternals.h"
 #import "SULog.h"
+#import "LKSPluginHost.h"
 
 #include <unistd.h>
 
@@ -141,7 +142,11 @@
 - (void) install
 {
 	NSBundle			*theBundle = [NSBundle bundleWithPath: [[NSFileManager defaultManager] stringWithFileSystemRepresentation: hostpath length:strlen(hostpath)]];
+#ifdef MAIL_PLUGIN_SPARKLE
+	host = [[LKSPluginHost alloc] initWithBundle: theBundle];
+#else
 	host = [[SUHost alloc] initWithBundle: theBundle];
+#endif
     installationPath = [[host installationPath] copy];
 	
     // Perhaps a poor assumption but: if we're not relaunching, we assume we shouldn't be showing any UI either. Because non-relaunching installations are kicked off without any user interaction, we shouldn't be interrupting them.

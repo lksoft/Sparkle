@@ -136,6 +136,9 @@
 		93FB277A156BD80D001937C7 /* SUPasswordPrompt.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FB2778156BD80D001937C7 /* SUPasswordPrompt.h */; };
 		93FB277B156BD80D001937C7 /* SUPasswordPrompt.m in Sources */ = {isa = PBXBuildFile; fileRef = 93FB2779156BD80D001937C7 /* SUPasswordPrompt.m */; };
 		93FB277F156BD826001937C7 /* SUPasswordPrompt.xib in Resources */ = {isa = PBXBuildFile; fileRef = 93FB277D156BD826001937C7 /* SUPasswordPrompt.xib */; };
+		D240ADE8178306BF00EBD6E6 /* LKSPluginHost.h in Headers */ = {isa = PBXBuildFile; fileRef = D240ADE6178306BF00EBD6E6 /* LKSPluginHost.h */; };
+		D240ADE9178306BF00EBD6E6 /* LKSPluginHost.m in Sources */ = {isa = PBXBuildFile; fileRef = D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */; };
+		D240ADEA178306BF00EBD6E6 /* LKSPluginHost.m in Sources */ = {isa = PBXBuildFile; fileRef = D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -402,6 +405,8 @@
 		93FB2778156BD80D001937C7 /* SUPasswordPrompt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUPasswordPrompt.h; sourceTree = "<group>"; };
 		93FB2779156BD80D001937C7 /* SUPasswordPrompt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUPasswordPrompt.m; sourceTree = "<group>"; };
 		93FB277E156BD826001937C7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SUPasswordPrompt.xib; sourceTree = "<group>"; };
+		D240ADE6178306BF00EBD6E6 /* LKSPluginHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LKSPluginHost.h; sourceTree = "<group>"; };
+		D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LKSPluginHost.m; sourceTree = "<group>"; };
 		FA1941CA0D94A70100DD942E /* ConfigFrameworkDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ConfigFrameworkDebug.xcconfig; sourceTree = "<group>"; };
 		FA1941CB0D94A70100DD942E /* ConfigTestAppDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ConfigTestAppDebug.xcconfig; sourceTree = "<group>"; };
 		FA1941CC0D94A70100DD942E /* ConfigCommonRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ConfigCommonRelease.xcconfig; sourceTree = "<group>"; };
@@ -654,6 +659,8 @@
 		61B5F8F309C4CE5900B25A18 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				D240ADE6178306BF00EBD6E6 /* LKSPluginHost.h */,
+				D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */,
 				61EF67580E25C5B400F754E0 /* SUHost.h */,
 				61EF67550E25B58D00F754E0 /* SUHost.m */,
 				61299B3509CB04E000B7442F /* Sparkle.h */,
@@ -783,6 +790,7 @@
 				61F83F740DBFE141006FDD30 /* SUBasicUpdateDriver.h in Headers */,
 				61B93A3C0DD02D7000DCD2F8 /* SUUIBasedUpdateDriver.h in Headers */,
 				61B93B270DD0FDD300DCD2F8 /* SUAutomaticUpdateDriver.h in Headers */,
+				D240ADE8178306BF00EBD6E6 /* LKSPluginHost.h in Headers */,
 				61B93C090DD112FF00DCD2F8 /* SUScheduledUpdateDriver.h in Headers */,
 				610134730DD250470049ACDF /* SUUpdateDriver.h in Headers */,
 				6101347B0DD2541A0049ACDF /* SUProbingUpdateDriver.h in Headers */,
@@ -1103,6 +1111,7 @@
 				55C14F0D136EF6F200649790 /* SUInstaller.m in Sources */,
 				55C14F20136EF84300649790 /* SUStatusController.m in Sources */,
 				55C14F21136EF84D00649790 /* SUPlainInstaller.m in Sources */,
+				D240ADEA178306BF00EBD6E6 /* LKSPluginHost.m in Sources */,
 				55C14F22136EF86000649790 /* SUStandardVersionComparator.m in Sources */,
 				55C14F23136EF86700649790 /* SUSystemProfiler.m in Sources */,
 				55C14F24136EF86F00649790 /* SUPackageInstaller.m in Sources */,
@@ -1140,6 +1149,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D240ADE9178306BF00EBD6E6 /* LKSPluginHost.m in Sources */,
 				61B5F8EE09C4CE3C00B25A18 /* SUUpdater.m in Sources */,
 				61B5F8EF09C4CE3C00B25A18 /* SUPlainInstallerInternals.m in Sources */,
 				61B5FBB709C4FAFF00B25A18 /* SUAppcast.m in Sources */,
@@ -1367,7 +1377,12 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Developer ID Application: Little Known Software, Inc.";
 				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MPC_SPARKLE_FOR_MAIL_PLUGINS,
+					MPM_SUPPRESS_INSECURE_DIALOGS,
+				);
 				PROVISIONING_PROFILE = "";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1377,7 +1392,12 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Developer ID Application: Little Known Software, Inc.";
 				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					MPC_SPARKLE_FOR_MAIL_PLUGINS,
+					MPM_SUPPRESS_INSECURE_DIALOGS,
+				);
 				PROVISIONING_PROFILE = "";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -1418,6 +1438,7 @@
 				);
 				PRODUCT_NAME = finish_installation;
 				PROVISIONING_PROFILE = "";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1443,30 +1464,10 @@
 				);
 				PRODUCT_NAME = finish_installation;
 				PROVISIONING_PROFILE = "";
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
-		};
-		55C14BBD136EEF1500649790 /* Release (GC dual-mode; 10.5+) */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA1941D40D94A70100DD942E /* ConfigRelaunchRelease.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = finish_installation.pch;
-				INFOPLIST_FILE = "finish_installation-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PRODUCT_NAME = finish_installation;
-			};
-			name = "Release (GC dual-mode; 10.5+)";
 		};
 		5D06E8D20FD68C7D005AE3F6 /* Debug */ = {
 			isa = XCBuildConfiguration;

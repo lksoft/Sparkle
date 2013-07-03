@@ -11,6 +11,7 @@
 #import "SUHost.h"
 #import "SUUpdatePermissionPrompt.h"
 
+#import "LKSPluginHost.h"
 #import "SUAutomaticUpdateDriver.h"
 #import "SUProbingUpdateDriver.h"
 #import "SUUserInitiatedUpdateDriver.h"
@@ -38,6 +39,8 @@
 @end
 
 @implementation SUUpdater
+
+@synthesize updatingIsSecure = _updatingIsSecure;
 
 #pragma mark Initialization
 
@@ -80,21 +83,32 @@ static NSString * const SUUpdaterDefaultsObservationContext = @"SUUpdaterDefault
 		if (sharedUpdaters == nil)
             sharedUpdaters = [[NSMutableDictionary alloc] init];
         [sharedUpdaters setObject:self forKey:[NSValue valueWithNonretainedObject:bundle]];
-        host = [[SUHost alloc] initWithBundle:bundle];
-		
+#ifdef MPC_SPARKLE_FOR_MAIL_PLUGINS
+		host = [[LKSPluginHost alloc] initWithBundle:bundle];
+#else
+		host = [[SUHost alloc] initWithBundle:bundle];
+#endif
+
+		self.updatingIsSecure = YES;
 #if !ENDANGER_USERS_WITH_INSECURE_UPDATES
 		// Saving-the-developer-from-a-stupid-mistake-check:
         BOOL hasPublicDSAKey = [host publicDSAKey] != nil;
         BOOL isMainBundle = [bundle isEqualTo:[NSBundle mainBundle]];
         BOOL hostIsCodeSigned = [SUCodeSigningVerifier hostApplicationIsCodeSigned];
         if (!isMainBundle && !hasPublicDSAKey) {
+			self.updatingIsSecure = NO;
+#ifndef MPM_SUPPRESS_INSECURE_DIALOGS
             [self notifyWillShowModalAlert];
             NSRunAlertPanel(@"Insecure update error!", @"For security reasons, you need to sign your updates with a DSA key. See Sparkle's documentation for more information.", @"OK", nil, nil);
             [self notifyDidShowModalAlert];
+#endif
         } else if (isMainBundle && !(hasPublicDSAKey || hostIsCodeSigned)) {
+			self.updatingIsSecure = NO;
+#ifndef MPM_SUPPRESS_INSECURE_DIALOGS
             [self notifyWillShowModalAlert];
             NSRunAlertPanel(@"Insecure update error!", @"For security reasons, you need to code sign your application or sign your updates with a DSA key. See Sparkle's documentation for more information.", @"OK", nil, nil);
             [self notifyDidShowModalAlert];
+#endif
         }
 #endif
         // This runs the permission prompt if needed, but never before the app has finished launching because the runloop won't run before that
