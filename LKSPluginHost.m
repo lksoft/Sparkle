@@ -102,61 +102,63 @@ static	NSDateFormatter	*dateFormatter_LKS = nil;
 
 - (BOOL)writeDefaultValue:(id)value forKey:(NSString *)defaultKey {
 	
-	if ([[NSFileManager defaultManager] fileExistsAtPath:self.sandboxedPrefsPath]) {
-		
-		NSString	*valueType = @"-bool";
-		NSString	*valueString = nil;
-		
-		if ([value isKindOfClass:[NSNumber class]]) {
-			if ([KEY_LIST_FOR_NUMBER rangeOfString:defaultKey].location != NSNotFound) {
-				if ([KEY_LIST_IS_INTEGER rangeOfString:defaultKey].location != NSNotFound) {
-					valueType = @"-int";
-					valueString = [(NSNumber *)value stringValue];
-				}
-				else {
-					valueString = [value boolValue]?@"YES":@"NO";
-				}
-			}
+	
+	//	If the prefs file and it's parent folder don't exist, then use the super, which will probably write in the wrong place, but what can I do?
+	if (![self.manager fileExistsAtPath:self.sandboxedPrefsPath]) {
+		if (![self.manager fileExistsAtPath:[self.sandboxedPrefsPath stringByDeletingLastPathComponent]]) {
+			[super setObject:value forUserDefaultsKey:defaultKey];
+			return YES;
 		}
-		else if ([value isKindOfClass:[NSString class]]) {
-			if ([KEY_LIST_FOR_STRING rangeOfString:defaultKey].location != NSNotFound) {
-				valueType = @"-string";
-				valueString = value;
-			}
-		}
-		else if ([value isKindOfClass:[NSDate class]]) {
-			if ([KEY_LIST_FOR_DATE rangeOfString:defaultKey].location != NSNotFound) {
-				valueType = @"-date";
-				valueString = [[[self class] formatter] stringFromDate:value];
-			}
-		}
-		
-		if (valueString == nil) {
-			NSLog(@"Error trying to write a default value – not valid value extracted from %@", value);
-			return NO;
-		}
-		
-		NSTask *writeDefaultTask = [[[NSTask alloc] init] autorelease];
-		[writeDefaultTask setLaunchPath:@"/usr/bin/defaults"];
-		[writeDefaultTask setArguments:@[@"write", self.sandboxedPrefsPath, defaultKey, valueType, valueString]];
-		
-		[writeDefaultTask launch];
-		[writeDefaultTask waitUntilExit];
-		
-		if ([writeDefaultTask terminationStatus] == 0) {
-			//	Send a distributed notice to give the plugin a chance to reload defaults if necessary
-			self.lastDefaultsLoadTime = [NSDate dateWithTimeIntervalSince1970:1];
-			[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"LKSSUPluginDefaultsChanged" object:nil userInfo:@{@"pluginIdentifier": [self.bundle bundleIdentifier]} deliverImmediately:YES];
-		}
-		
-		return ([writeDefaultTask terminationStatus] == 0);
-	}
-	else {
-		[super setObject:value forUserDefaultsKey:defaultKey];
-		return YES;
 	}
 	
-	return NO;
+	//	Otherwise let defaults create the file
+
+	NSString	*valueType = @"-bool";
+	NSString	*valueString = nil;
+	
+	if ([value isKindOfClass:[NSNumber class]]) {
+		if ([KEY_LIST_FOR_NUMBER rangeOfString:defaultKey].location != NSNotFound) {
+			if ([KEY_LIST_IS_INTEGER rangeOfString:defaultKey].location != NSNotFound) {
+				valueType = @"-int";
+				valueString = [(NSNumber *)value stringValue];
+			}
+			else {
+				valueString = [value boolValue]?@"YES":@"NO";
+			}
+		}
+	}
+	else if ([value isKindOfClass:[NSString class]]) {
+		if ([KEY_LIST_FOR_STRING rangeOfString:defaultKey].location != NSNotFound) {
+			valueType = @"-string";
+			valueString = value;
+		}
+	}
+	else if ([value isKindOfClass:[NSDate class]]) {
+		if ([KEY_LIST_FOR_DATE rangeOfString:defaultKey].location != NSNotFound) {
+			valueType = @"-date";
+			valueString = [[[self class] formatter] stringFromDate:value];
+		}
+	}
+	
+	if (valueString == nil) {
+		NSLog(@"Error trying to write a default value – not valid value extracted from %@", value);
+		return NO;
+	}
+	
+	NSTask *writeDefaultTask = [[[NSTask alloc] init] autorelease];
+	[writeDefaultTask setLaunchPath:@"/usr/bin/defaults"];
+	[writeDefaultTask setArguments:@[@"write", self.sandboxedPrefsPath, defaultKey, valueType, valueString]];
+	
+	[writeDefaultTask launch];
+	[writeDefaultTask waitUntilExit];
+	
+	if ([writeDefaultTask terminationStatus] == 0) {
+		//	Send a distributed notice to give the plugin a chance to reload defaults if necessary
+		self.lastDefaultsLoadTime = [NSDate dateWithTimeIntervalSince1970:1];
+		[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"LKSSUPluginDefaultsChanged" object:nil userInfo:@{@"pluginIdentifier": [self.bundle bundleIdentifier]} deliverImmediately:YES];
+	}
+	
+	return ([writeDefaultTask terminationStatus] == 0);
 }
 
 
@@ -209,7 +211,9 @@ static	NSDateFormatter	*dateFormatter_LKS = nil;
 + (NSDateFormatter *)formatter {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		dateFormatter_LKS = [[NSDateFormatter alloc] initWithDateFormat:@"yyyy-MM-dd'T'HH:mm:ssz" allowNaturalLanguage:NO];
+		dateFormatter_LKS = [[NSDateFormatter alloc] init];
+		[dateFormatter_LKS setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
+		[dateFormatter_LKS setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
 	});
 	return dateFormatter_LKS;
 }
