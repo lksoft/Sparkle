@@ -38,6 +38,13 @@
 
 @synthesize skipPreferenceSaves = _skipPreferenceSaves;
 
+- (void)dealloc {
+	if ([self.myHost isKindOfClass:[LKSPluginHost class]]) {
+		((LKSPluginHost *)self.myHost).skipPreferenceSaves = NO;
+	}
+	[super dealloc];
+}
+
 - (void)checkForUpdateInformation {
 	if ([self updateInProgress]) { return; }
 	if (self.myCheckTimer) {
@@ -65,6 +72,20 @@
 - (void)startUpdateCycle {
 	
 }
+
+- (void)updateDriverDidFinish:(NSNotification *)note {
+	if ([note object] == self.myDriver && [self.myDriver finished])	{
+		self.myDriver = nil;
+		if (![[note object] isKindOfClass:NSClassFromString(@"SUProbingUpdateDriver")]) {
+			[self scheduleNextUpdateCheck];
+		}
+		if ([self.myHost isKindOfClass:[LKSPluginHost class]]) {
+			((LKSPluginHost *)self.myHost).skipPreferenceSaves = NO;
+		}
+    }
+}
+
+
 
 #pragma mark - Accessors
 
