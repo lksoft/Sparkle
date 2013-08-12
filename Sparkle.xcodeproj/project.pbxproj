@@ -141,6 +141,8 @@
 		D240ADE8178306BF00EBD6E6 /* LKSPluginHost.h in Headers */ = {isa = PBXBuildFile; fileRef = D240ADE6178306BF00EBD6E6 /* LKSPluginHost.h */; };
 		D240ADE9178306BF00EBD6E6 /* LKSPluginHost.m in Sources */ = {isa = PBXBuildFile; fileRef = D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */; };
 		D240ADEA178306BF00EBD6E6 /* LKSPluginHost.m in Sources */ = {isa = PBXBuildFile; fileRef = D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */; };
+		D2C04D0017B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = D2C04CFE17B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.h */; };
+		D2C04D0117B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C04CFF17B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -411,6 +413,8 @@
 		D2041101178453140041696C /* LKSPluginUpdater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LKSPluginUpdater.m; sourceTree = "<group>"; };
 		D240ADE6178306BF00EBD6E6 /* LKSPluginHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LKSPluginHost.h; sourceTree = "<group>"; };
 		D240ADE7178306BF00EBD6E6 /* LKSPluginHost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LKSPluginHost.m; sourceTree = "<group>"; };
+		D2C04CFE17B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LKSPluginCodeSigningVerifier.h; sourceTree = "<group>"; };
+		D2C04CFF17B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LKSPluginCodeSigningVerifier.m; sourceTree = "<group>"; };
 		FA1941CA0D94A70100DD942E /* ConfigFrameworkDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ConfigFrameworkDebug.xcconfig; sourceTree = "<group>"; };
 		FA1941CB0D94A70100DD942E /* ConfigTestAppDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ConfigTestAppDebug.xcconfig; sourceTree = "<group>"; };
 		FA1941CC0D94A70100DD942E /* ConfigCommonRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ConfigCommonRelease.xcconfig; sourceTree = "<group>"; };
@@ -698,6 +702,8 @@
 				61299A2E09CA2DAB00B7442F /* SUDSAVerifier.m */,
 				61B078CC15A5FB6100600039 /* SUCodeSigningVerifier.h */,
 				61B078CD15A5FB6100600039 /* SUCodeSigningVerifier.m */,
+				D2C04CFE17B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.h */,
+				D2C04CFF17B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.m */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -803,6 +809,7 @@
 				6101347B0DD2541A0049ACDF /* SUProbingUpdateDriver.h in Headers */,
 				61699BCC0DDB92BD005878A4 /* SUVersionComparisonTest.h in Headers */,
 				61A354550DF113C70076ECB1 /* SUUserInitiatedUpdateDriver.h in Headers */,
+				D2C04D0017B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.h in Headers */,
 				6102FE460E077FCE00F85D09 /* SUPipedUnarchiver.h in Headers */,
 				6102FE4A0E07803800F85D09 /* SUDiskImageUnarchiver.h in Headers */,
 				6102FE5B0E08C7EC00F85D09 /* SUUnarchiver_Private.h in Headers */,
@@ -1165,6 +1172,7 @@
 				6196CFFA09C72149000DC222 /* SUStatusController.m in Sources */,
 				61299A3009CA2DAB00B7442F /* SUDSAVerifier.m in Sources */,
 				61299A6009CA6EB100B7442F /* SUConstants.m in Sources */,
+				D2C04D0117B8D9DA00D3640A /* LKSPluginCodeSigningVerifier.m in Sources */,
 				61299A8E09CA790200B7442F /* SUUnarchiver.m in Sources */,
 				6120721309CC5C4B007FE0F6 /* SUAutomaticUpdateAlert.m in Sources */,
 				610EC1E00CF3A5FE00AE239E /* NTSynchronousTask.m in Sources */,

@@ -19,6 +19,7 @@
 #import "SUPlainInstallerInternals.h"
 #import "SUBinaryDeltaCommon.h"
 #import "SUCodeSigningVerifier.h"
+#import "LKSPluginCodeSigningVerifier.h"
 #import "SUUpdater_Private.h"
 
 @interface SUBasicUpdateDriver () <NSURLDownloadDelegate>; @end
@@ -211,7 +212,16 @@
     if (newBundlePath)
     {
         NSError *error = nil;
-        if ([SUCodeSigningVerifier codeSignatureIsValidAtPath:newBundlePath error:&error]) {
+		BOOL	result;
+		
+		if ([host isKindOfClass:NSClassFromString(@"LKSPluginHost")]) {
+			result = [LKSPluginCodeSigningVerifier codeSignatureIsValidAtPath:newBundlePath pluginPath:[host bundlePath] error:&error];
+		}
+		else {
+			result = [SUCodeSigningVerifier codeSignatureIsValidAtPath:newBundlePath error:&error];
+		}
+		
+        if (result) {
             return YES;
         } else {
             SULog(@"Code signature check on update failed: %@", error);
