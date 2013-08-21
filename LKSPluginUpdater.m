@@ -8,6 +8,7 @@
 
 #import "LKSPluginUpdater.h"
 #import "LKSPluginHost.h"
+#import "LKSPluginCodeSigningVerifier.h"
 
 #import "SUProbingUpdateDriver.h"
 #import "SULog.h"
@@ -37,6 +38,22 @@
 @implementation LKSPluginUpdater
 
 @synthesize skipPreferenceSaves = _skipPreferenceSaves;
+
+
+- (id)initForBundle:(NSBundle *)bundle {
+	self = [super initForBundle:bundle];
+	if (self) {
+		//	Redo the security testing to be based on plugins
+		self.updatingIsSecure = YES;
+		// Saving-the-developer-from-a-stupid-mistake-check:
+        BOOL hasPublicDSAKey = [self.myHost publicDSAKey] != nil;
+        BOOL hostIsCodeSigned = [LKSPluginCodeSigningVerifier hostApplicationIsCodeSigned];
+        if (!(hasPublicDSAKey || hostIsCodeSigned)) {
+			self.updatingIsSecure = NO;
+        }
+	}
+	return self;
+}
 
 - (void)dealloc {
 	if ([self.myHost isKindOfClass:[LKSPluginHost class]]) {
