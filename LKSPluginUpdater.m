@@ -40,6 +40,12 @@
 @synthesize skipPreferenceSaves = _skipPreferenceSaves;
 
 
++ (SUUpdater *)updaterForBundle:(NSBundle *)aBundle delegate:(id)aDelegate {
+	SUUpdater	*updater = [self updaterForBundle:aBundle];
+	[updater setDelegate:aDelegate];
+	return updater;
+}
+
 - (id)initForBundle:(NSBundle *)bundle {
 	self = [super initForBundle:bundle];
 	if (self) {
