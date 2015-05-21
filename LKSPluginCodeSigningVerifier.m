@@ -14,8 +14,6 @@
 @implementation LKSPluginCodeSigningVerifier
 
 + (BOOL)codeSignatureIsValidAtPath:(NSString *)destinationPath pluginPath:(NSString *)pluginPath error:(NSError **)error {
-    // This API didn't exist prior to 10.6.
-    if (SecCodeCopySelf == NULL) return NO;
     
     OSStatus result;
     SecRequirementRef	requirement = NULL;
