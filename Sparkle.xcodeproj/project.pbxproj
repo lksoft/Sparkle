@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		3772FEA913DE0B6B00F79537 /* SUVersionDisplayProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 3772FEA813DE0B6B00F79537 /* SUVersionDisplayProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4929FC971B0E85FE0092E89A /* LKSMPCInstaller.h in Headers */ = {isa = PBXBuildFile; fileRef = 4929FC951B0E85FE0092E89A /* LKSMPCInstaller.h */; };
+		4929FC981B0E85FE0092E89A /* LKSMPCInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 4929FC961B0E85FE0092E89A /* LKSMPCInstaller.m */; };
+		4929FC991B0F94840092E89A /* SUInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 618FA5000DAE88B40026945C /* SUInstaller.m */; };
+		4929FC9A1B0F96BC0092E89A /* LKSMPCInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 4929FC961B0E85FE0092E89A /* LKSMPCInstaller.m */; };
 		525A2790133D6AE900FD8D70 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 525A278F133D6AE900FD8D70 /* Cocoa.framework */; };
 		525A27A0133D6B9700FD8D70 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 525A278F133D6AE900FD8D70 /* Cocoa.framework */; };
 		550347011370023A00AE7681 /* Sparkle.icns in Resources */ = {isa = PBXBuildFile; fileRef = 550347001370023A00AE7681 /* Sparkle.icns */; };
@@ -23,7 +27,6 @@
 		55C14F07136EF6DB00649790 /* SULog.m in Sources */ = {isa = PBXBuildFile; fileRef = 55C14F05136EF6DB00649790 /* SULog.m */; };
 		55C14F08136EF6DB00649790 /* SULog.m in Sources */ = {isa = PBXBuildFile; fileRef = 55C14F05136EF6DB00649790 /* SULog.m */; };
 		55C14F0C136EF6EA00649790 /* SUHost.m in Sources */ = {isa = PBXBuildFile; fileRef = 61EF67550E25B58D00F754E0 /* SUHost.m */; };
-		55C14F0D136EF6F200649790 /* SUInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 618FA5000DAE88B40026945C /* SUInstaller.m */; };
 		55C14F0F136EF73600649790 /* finish_installation.pch in Headers */ = {isa = PBXBuildFile; fileRef = 55C14F0E136EF73600649790 /* finish_installation.pch */; };
 		55C14F20136EF84300649790 /* SUStatusController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6196CFE409C71ADE000DC222 /* SUStatusController.m */; };
 		55C14F21136EF84D00649790 /* SUPlainInstaller.m in Sources */ = {isa = PBXBuildFile; fileRef = 618FA5040DAE8AB80026945C /* SUPlainInstaller.m */; };
@@ -197,6 +200,8 @@
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		3772FEA813DE0B6B00F79537 /* SUVersionDisplayProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUVersionDisplayProtocol.h; sourceTree = "<group>"; };
+		4929FC951B0E85FE0092E89A /* LKSMPCInstaller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LKSMPCInstaller.h; sourceTree = "<group>"; };
+		4929FC961B0E85FE0092E89A /* LKSMPCInstaller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LKSMPCInstaller.m; sourceTree = "<group>"; };
 		525A278F133D6AE900FD8D70 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		550347001370023A00AE7681 /* Sparkle.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Sparkle.icns; sourceTree = "<group>"; };
 		55C14BB7136EEF1500649790 /* finish_installation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = finish_installation.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -660,6 +665,8 @@
 				61B5F8E509C4CE3C00B25A18 /* SUPlainInstallerInternals.m */,
 				618FA5200DAE8E8A0026945C /* SUPackageInstaller.h */,
 				618FA5210DAE8E8A0026945C /* SUPackageInstaller.m */,
+				4929FC951B0E85FE0092E89A /* LKSMPCInstaller.h */,
+				4929FC961B0E85FE0092E89A /* LKSMPCInstaller.m */,
 			);
 			name = Installation;
 			sourceTree = "<group>";
@@ -796,6 +803,7 @@
 				61A2279C0D1CEE7600430CCD /* SUSystemProfiler.h in Headers */,
 				6160E7E10D3B4A8800E9CD71 /* NTSynchronousTask.h in Headers */,
 				612DCBAF0D488BC60015DBEA /* SUUpdatePermissionPrompt.h in Headers */,
+				4929FC971B0E85FE0092E89A /* LKSMPCInstaller.h in Headers */,
 				61180BCA0D64138900B4E0D1 /* SUWindowController.h in Headers */,
 				618FA5010DAE88B40026945C /* SUInstaller.h in Headers */,
 				618FA5050DAE8AB80026945C /* SUPlainInstaller.h in Headers */,
@@ -1120,11 +1128,12 @@
 			files = (
 				55C14BD4136EEFCE00649790 /* finish_installation.m in Sources */,
 				55C14F00136EF6B700649790 /* SUConstants.m in Sources */,
+				4929FC9A1B0F96BC0092E89A /* LKSMPCInstaller.m in Sources */,
 				55C14F08136EF6DB00649790 /* SULog.m in Sources */,
 				55C14F0C136EF6EA00649790 /* SUHost.m in Sources */,
-				55C14F0D136EF6F200649790 /* SUInstaller.m in Sources */,
 				55C14F20136EF84300649790 /* SUStatusController.m in Sources */,
 				55C14F21136EF84D00649790 /* SUPlainInstaller.m in Sources */,
+				4929FC991B0F94840092E89A /* SUInstaller.m in Sources */,
 				D240ADEA178306BF00EBD6E6 /* LKSPluginHost.m in Sources */,
 				55C14F22136EF86000649790 /* SUStandardVersionComparator.m in Sources */,
 				55C14F23136EF86700649790 /* SUSystemProfiler.m in Sources */,
@@ -1191,6 +1200,7 @@
 				6101347C0DD2541A0049ACDF /* SUProbingUpdateDriver.m in Sources */,
 				61A354560DF113C70076ECB1 /* SUUserInitiatedUpdateDriver.m in Sources */,
 				6102FE4B0E07803800F85D09 /* SUDiskImageUnarchiver.m in Sources */,
+				4929FC981B0E85FE0092E89A /* LKSMPCInstaller.m in Sources */,
 				6102FE5C0E08C7EC00F85D09 /* SUUnarchiver_Private.m in Sources */,
 				61D85D6D0E10B2ED00F9B4A9 /* SUPipedUnarchiver.m in Sources */,
 				D2041103178453140041696C /* LKSPluginUpdater.m in Sources */,

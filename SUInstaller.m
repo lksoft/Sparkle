@@ -12,6 +12,7 @@
 #import "SUHost.h"
 #import "SUConstants.h"
 #import "SULog.h"
+#import "LKSMPCInstaller.h"
 
 
 @implementation SUInstaller
@@ -42,7 +43,7 @@ static NSString*	sUpdateFolder = nil;
 		return NO;	
 }
 
-+ (NSString *)installSourcePathInUpdateFolder:(NSString *)inUpdateFolder forHost:(SUHost *)host isPackage:(BOOL *)isPackagePtr
++ (NSString *)installSourcePathInUpdateFolder:(NSString *)inUpdateFolder forHost:(SUHost *)host isPackage:(BOOL *)isPackagePtr isMPCPackage:(BOOL *)isMPCPackagePtr
 {
     // Search subdirectories for the application
 	NSString	*currentFile,
@@ -50,14 +51,15 @@ static NSString*	sUpdateFolder = nil;
     *bundleFileName = [[host bundlePath] lastPathComponent],
     *alternateBundleFileName = [[host name] stringByAppendingPathExtension:[[host bundlePath] pathExtension]];
 	BOOL isPackage = NO;
+	BOOL isMPCPackage = NO;
+	BOOL canHandleMPCPackage = (NSClassFromString(@"LKSMPCInstaller") != nil);
 	NSString *fallbackPackagePath = nil;
-	NSDirectoryEnumerator *dirEnum = [[NSFileManager defaultManager] enumeratorAtPath: inUpdateFolder];
+	NSDirectoryEnumerator *dirEnum = [[NSFileManager defaultManager] enumeratorAtPath:inUpdateFolder];
 	
 	[sUpdateFolder release];
 	sUpdateFolder = [inUpdateFolder retain];
 	
-	while ((currentFile = [dirEnum nextObject]))
-	{
+	while ((currentFile = [dirEnum nextObject])) {
 		NSString *currentPath = [inUpdateFolder stringByAppendingPathComponent:currentFile];		
 		if ([[currentFile lastPathComponent] isEqualToString:bundleFileName] ||
 			[[currentFile lastPathComponent] isEqualToString:alternateBundleFileName]) // We found one!
@@ -81,6 +83,17 @@ static NSString*	sUpdateFolder = nil;
 				fallbackPackagePath = currentPath;
 			}
 		}
+		else if (canHandleMPCPackage && [[currentFile pathExtension] isEqualToString:@"mpinstall"]) {
+			if ([[[currentFile lastPathComponent] stringByDeletingPathExtension] isEqualToString:[bundleFileName stringByDeletingPathExtension]]) {
+				isMPCPackage = YES;
+				newAppDownloadPath = currentPath;
+				break;
+			}
+			else {
+				// Remember any other non-matching packages we have seen should we need to use one of them as a fallback.
+				fallbackPackagePath = currentPath;
+			}
+		}
 		else
 		{
 			// Try matching on bundle identifiers in case the user has changed the name of the host app
@@ -100,35 +113,47 @@ static NSString*	sUpdateFolder = nil;
 	
 	// We don't have a valid path. Try to use the fallback package.
     
-	if (newAppDownloadPath == nil && fallbackPackagePath != nil)
-	{
-		isPackage = YES;
+	if (newAppDownloadPath == nil && fallbackPackagePath != nil) {
+		if (canHandleMPCPackage && [[currentFile pathExtension] isEqualToString:@"mpinstall"]) {
+			isMPCPackage = YES;
+		}
+		else {
+			isPackage = YES;
+		}
 		newAppDownloadPath = fallbackPackagePath;
 	}
 
     if (isPackagePtr) *isPackagePtr = isPackage;
+	if (isMPCPackagePtr) *isMPCPackagePtr = isMPCPackage;
     return newAppDownloadPath;
 }
 
 + (NSString *)appPathInUpdateFolder:(NSString *)updateFolder forHost:(SUHost *)host
 {
     BOOL isPackage = NO;
-    NSString *path = [self installSourcePathInUpdateFolder:updateFolder forHost:host isPackage:&isPackage];
-    return isPackage ? nil : path;
+	BOOL isMPCPackage = NO;
+    NSString *path = [self installSourcePathInUpdateFolder:updateFolder forHost:host isPackage:&isPackage isMPCPackage:&isMPCPackage];
+    return (isPackage || isMPCPackage) ? nil : path;
 }
 
 + (void)installFromUpdateFolder:(NSString *)inUpdateFolder overHost:(SUHost *)host installationPath:(NSString *)installationPath delegate:delegate synchronously:(BOOL)synchronously versionComparator:(id <SUVersionComparison>)comparator
 {
     BOOL isPackage = NO;
-	NSString *newAppDownloadPath = [self installSourcePathInUpdateFolder:inUpdateFolder forHost:host isPackage:&isPackage];
+	BOOL isMPCPackage = NO;
+	NSString *newAppDownloadPath = [self installSourcePathInUpdateFolder:inUpdateFolder forHost:host isPackage:&isPackage isMPCPackage:&isMPCPackage];
     
-	if (newAppDownloadPath == nil)
-	{
+	if (newAppDownloadPath == nil) {
 		[self finishInstallationToPath:installationPath withResult:NO host:host error:[NSError errorWithDomain:SUSparkleErrorDomain code:SUMissingUpdateError userInfo:[NSDictionary dictionaryWithObject:@"Couldn't find an appropriate update in the downloaded package." forKey:NSLocalizedDescriptionKey]] delegate:delegate];
 	}
-	else
-	{
-		[(isPackage ? [SUPackageInstaller class] : [SUPlainInstaller class]) performInstallationToPath:installationPath fromPath:newAppDownloadPath host:host delegate:delegate synchronously:synchronously versionComparator:comparator];
+	else {
+		Class	InstallerClass = [SUPlainInstaller class];
+		if (isPackage) {
+			InstallerClass = [SUPackageInstaller class];
+		}
+		else if (isMPCPackage) {
+			InstallerClass = NSClassFromString(@"LKSMPCInstaller");
+		}
+		[InstallerClass performInstallationToPath:installationPath fromPath:newAppDownloadPath host:host delegate:delegate synchronously:synchronously versionComparator:comparator];
 	}
 }
 
