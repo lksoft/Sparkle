@@ -19,7 +19,8 @@ NSString *LKMPCErrorDomain = @"LKSMPTSparkleInstallerDomain";
 
 typedef NS_ENUM(NSUInteger, LKMPCErrorCode) {
 	LKMPCErrorCodeInvalidInstallFile = 4001,
-	LKMPCErrorCodeInvalidInstallFileFormat
+	LKMPCErrorCodeInvalidInstallFileFormat,
+	LKMPCErrorCodeCouldNotFindMPT
 };
 
 
@@ -76,6 +77,18 @@ typedef NS_ENUM(NSUInteger, LKMPCErrorCode) {
 		}
 	}
 	
+	NSString	*pluginToolPath = [installationPath stringByAppendingPathComponent:@"/Contents/Resources/MailPluginTool.app"];
+#ifdef DEBUG
+	pluginToolPath = @"/Users/testing/Library/Developer/Xcode/DerivedData/MailPluginManager-awzptkybbxtathdbrfwrddbxaebv/Build/Products/Debug/MailPluginTool.app";
+#endif
+	if (![[NSFileManager defaultManager] fileExistsAtPath:pluginToolPath]) {
+		NSURL *mptURL = [[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:@"com.littleknownwoftware.MailPluginTool"];
+		pluginToolPath = mptURL.path;
+	}
+	if (pluginToolPath == nil) {
+		error = [NSError errorWithDomain:LKMPCErrorDomain code:LKMPCErrorCodeCouldNotFindMPT userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"I couldn't find a proper Mail Plugin Tool application to use.", @"")}];
+	}
+
 	//	If we have an error, then show it
 	if (error != nil) {
 		[self finishInstallationToPath:installationPath withResult:NO host:host error:error delegate:delegate];
@@ -88,8 +101,6 @@ typedef NS_ENUM(NSUInteger, LKMPCErrorCode) {
 		// -W = wait until the app has quit.
 		// -n = Open another instance if already open.
 		// -b = app bundle identifier
-		NSString	*pluginToolPath = [installationPath stringByAppendingPathComponent:@"/Contents/Resources/MailPluginTool.app"];
-		pluginToolPath = @"/Users/testing/Library/Developer/Xcode/DerivedData/MailPluginManager-awzptkybbxtathdbrfwrddbxaebv/Build/Products/Debug/MailPluginTool.app";
 		NSString	*command = @"/usr/bin/open";
 		NSArray		*args = @[@"-W", @"-a", pluginToolPath, @"--args", @"-install", installationPath, path];
 		
