@@ -32,8 +32,8 @@ typedef NS_ENUM(NSUInteger, LKMPCErrorCode) {
 	NSTask *installer = [NSTask launchedTaskWithLaunchPath:info[LKMPCInstallerCommandKey] arguments:info[LKMPCInstallerArgumentsKey]];
 	[installer waitUntilExit];
 	
-	//	Just wait 3 seconds for it to finish
-	[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:3.0f]];
+	//	Just wait 2 seconds for it to finish
+	[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:2.0f]];
 	
 	// Known bug: if the installation fails or is canceled, Sparkle goes ahead and restarts, thinking everything is fine.
 	if ([NSThread isMainThread]) {
