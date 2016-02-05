@@ -78,9 +78,6 @@ typedef NS_ENUM(NSUInteger, LKMPCErrorCode) {
 	}
 	
 	NSString	*pluginToolPath = [installationPath stringByAppendingPathComponent:@"/Contents/Resources/MailPluginTool.app"];
-#ifdef DEBUG
-	pluginToolPath = @"/Users/testing/Library/Developer/Xcode/DerivedData/MailPluginManager-awzptkybbxtathdbrfwrddbxaebv/Build/Products/Debug/MailPluginTool.app";
-#endif
 	if (![[NSFileManager defaultManager] fileExistsAtPath:pluginToolPath]) {
 		NSURL *mptURL = [[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:@"com.littleknownwoftware.MailPluginTool"];
 		pluginToolPath = mptURL.path;

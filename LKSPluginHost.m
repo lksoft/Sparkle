@@ -141,7 +141,7 @@ static	NSDateFormatter	*dateFormatter_LKS = nil;
 	}
 	
 	if (valueString == nil) {
-		NSLog(@"Error trying to write a default value – not valid value extracted from %@", value);
+		NSLog(@"Error trying to write a default value for key '%@' – not valid value extracted from %@", defaultKey, value);
 		return NO;
 	}
 	
