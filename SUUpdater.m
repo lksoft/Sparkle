@@ -83,11 +83,12 @@ static NSString * const SUUpdaterDefaultsObservationContext = @"SUUpdaterDefault
 		if (sharedUpdaters == nil)
             sharedUpdaters = [[NSMutableDictionary alloc] init];
         [sharedUpdaters setObject:self forKey:[NSValue valueWithNonretainedObject:bundle]];
-#ifdef MPC_SPARKLE_FOR_MAIL_PLUGINS
-		host = [[LKSPluginHost alloc] initWithBundle:bundle];
-#else
-		host = [[SUHost alloc] initWithBundle:bundle];
-#endif
+		if ([[[bundle bundlePath] pathExtension] isEqualToString:@"mailbundle"]) {
+			host = [[LKSPluginHost alloc] initWithBundle:bundle];
+		}
+		else {
+			host = [[SUHost alloc] initWithBundle:bundle];
+		}
 
 		self.updatingIsSecure = YES;
 #if !ENDANGER_USERS_WITH_INSECURE_UPDATES
