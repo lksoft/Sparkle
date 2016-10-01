@@ -437,7 +437,7 @@ static NSString * const SUUpdaterDefaultsObservationContext = @"SUUpdaterDefault
 - (NSURL *)feedURL // *** MUST BE CALLED ON MAIN THREAD ***
 {
 	// A value in the user defaults overrides one in the Info.plist (so preferences panels can be created wherein users choose between beta / release feeds).
-	NSString *appcastString = [host objectForKey:SUFeedURLKey];
+	NSString *appcastString = [host objectForInfoDictionaryKey:SUFeedURLKey];
 	if( [delegate respondsToSelector: @selector(feedURLStringForUpdater:)] )
 		appcastString = [delegate feedURLStringForUpdater: self];
 	if (!appcastString) // Can't find an appcast string!
